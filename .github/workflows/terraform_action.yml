@@ -41,7 +41,7 @@ jobs:
       # Step 2: Clone the Terraform modules repository (Repo A)
       - name: Clone Terraform Modules Repo
         run: |
-          git clone https://github.com/pkkumar1234/Terraform-aws-autoscaling.git
+          git clone https://github.com/pkkumar1234/Terraform-aws-autoscaling.git ./module
 
       # Step 3: Set up Terraform
       - name: Setup Terraform
@@ -52,10 +52,12 @@ jobs:
       # Step 4: Terraform Init
       - name: Terraform Init
         #run: terraform init -backend-config="workspace/${{ github.event.inputs.loc_name_prefix }}.backend"
+        working-directory: ./module
         run: terraform init
 
       # Step 5: Terraform Plan
       - name: Terraform Plan
+        working-directory: ./module
         env:
           TF_VAR_name_prefix: ${{ github.event.inputs.loc_name_prefix }}
           TF_VAR_launch_image_id: ${{ github.event.inputs.loc_launch_image_id }}
@@ -69,6 +71,7 @@ jobs:
 
       # Step 6: Terraform Apply
       - name: Terraform Apply
+        working-directory: ./module
         env:
           TF_VAR_name_prefix: ${{ github.event.inputs.loc_name_prefix }}
           TF_VAR_launch_image_id: ${{ github.event.inputs.loc_launch_image_id }}
