@@ -41,7 +41,7 @@ jobs:
       # Step 2: Clone the Terraform modules repository (Repo A)
       - name: Clone Terraform Modules Repo
         run: |
-          git clone https://github.com/pkkumar1234/Terraform-aws-autoscaling.git
+          git clone https://github.com/pkkumar1234/Terraform-aws-autoscaling.git .
 
       # Step 3: Set up Terraform
       - name: Setup Terraform
