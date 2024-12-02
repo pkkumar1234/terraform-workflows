@@ -1,0 +1,80 @@
+name: Terraform Deployment Auto Scaling Group
+
+on:
+  workflow_dispatch: # Enable manual trigger with inputs
+    inputs:
+      loc_name_prefix:
+        description: "Name prefix"
+        required: true
+      loc_launch_image_id:
+        description: "Launch image ID"
+        required: true
+      loc_instance_type:
+        description: "Instance type"
+        required: true
+      loc_launch_tags:
+        description: "Launch tags"
+        required: true
+      loc_desired_capacity:
+        description: "Desired capacity"
+        required: true
+      loc_max_size:
+        description: "Max size"
+        required: true
+      loc_min_size:
+        description: "Min size"
+        required: true
+      loc_autoscaling_tag:
+        description: "Autoscaling tag"
+        required: true
+
+jobs:
+  terraform:
+    name: Deploy AWS Resources
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout current repository (Repo B)
+      - name: Checkout Workspace Repo
+        uses: actions/checkout@v3
+
+      # Step 2: Clone the Terraform modules repository (Repo A)
+      - name: Clone Terraform Modules Repo
+        run: |
+          git clone https://github.com/pkkumar1234/Terraform-aws-autoscaling.git
+
+      # Step 3: Set up Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+
+      # Step 4: Terraform Init
+      - name: Terraform Init
+        run: terraform init -backend-config="workspace/${{ github.event.inputs.loc_name_prefix }}.backend"
+
+      # Step 5: Terraform Plan
+      - name: Terraform Plan
+        env:
+          TF_VAR_name_prefix: ${{ github.event.inputs.loc_name_prefix }}
+          TF_VAR_launch_image_id: ${{ github.event.inputs.loc_launch_image_id }}
+          TF_VAR_instance_type: ${{ github.event.inputs.loc_instance_type }}
+          TF_VAR_launch_tags: ${{ github.event.inputs.loc_launch_tags }}
+          TF_VAR_desired_capacity: ${{ github.event.inputs.loc_desired_capacity }}
+          TF_VAR_max_size: ${{ github.event.inputs.loc_max_size }}
+          TF_VAR_min_size: ${{ github.event.inputs.loc_min_size }}
+          TF_VAR_autoscaling_tag: ${{ github.event.inputs.loc_autoscaling_tag }}
+        run: terraform plan
+
+      # Step 6: Terraform Apply
+      - name: Terraform Apply
+        env:
+          TF_VAR_name_prefix: ${{ github.event.inputs.loc_name_prefix }}
+          TF_VAR_launch_image_id: ${{ github.event.inputs.loc_launch_image_id }}
+          TF_VAR_instance_type: ${{ github.event.inputs.loc_instance_type }}
+          TF_VAR_launch_tags: ${{ github.event.inputs.loc_launch_tags }}
+          TF_VAR_desired_capacity: ${{ github.event.inputs.loc_desired_capacity }}
+          TF_VAR_max_size: ${{ github.event.inputs.loc_max_size }}
+          TF_VAR_min_size: ${{ github.event.inputs.loc_min_size }}
+          TF_VAR_autoscaling_tag: ${{ github.event.inputs.loc_autoscaling_tag }}
+        run: terraform apply -auto-approve
