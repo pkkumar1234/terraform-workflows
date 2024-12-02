@@ -51,7 +51,8 @@ jobs:
 
       # Step 4: Terraform Init
       - name: Terraform Init
-        run: terraform init -backend-config="workspace/${{ github.event.inputs.loc_name_prefix }}.backend"
+        #run: terraform init -backend-config="workspace/${{ github.event.inputs.loc_name_prefix }}.backend"
+        run: terraform init
 
       # Step 5: Terraform Plan
       - name: Terraform Plan
